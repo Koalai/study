@@ -4,11 +4,11 @@ import Part from './Part';
 function Content({course}) {
   return (
     <div>
-     {course['parts'].map((part, index) => (
-      <div key={index}>
-       <Part name={part.name} exercises={part.exercises} />
-      </div>
-     ))}
+      {course['parts'].map(p => (
+        <div key={p.id}>
+        <Part name={p.name} exercises={p.exercises} />
+        </div>
+      ))}
     </div>
   );
 }
