@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import Filter from './components/Filter';
-import ContactForm from './components/ContactForm';
-import Person from './components/Person';
+import Filter from './components/exercise2/Filter';
+import ContactForm from './components/exercise2/ContactForm';
+import Person from './components/exercise2/Person';
 
 const App = () => {
   const [newName, setNewName] = useState('');
