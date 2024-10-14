@@ -1,55 +1,35 @@
 import { useState } from 'react';
-import Course from './components/Course';
-
+import Filter from './components/Filter';
+import ContactForm from './components/ContactForm';
+import Person from './components/Person';
 
 const App = () => {
-  
-  const courses = [
-    {
-      name: 'Half Stack application development',
-      id: 1,
-      parts: [
-        {
-          name: 'Fundamentals of React',
-          exercises: 10,
-          id: 1,
-        },
-        {
-          name: 'Using props to pass data',
-          exercises: 7,
-          id: 2,
-        },
-        {
-          name: 'State of a component',
-          exercises: 14,
-          id: 3,
-        },
-        {
-          name: 'Redux',
-          exercises: 11,
-          id: 4,
-        },
-      ],
-    },
-    {
-      name: 'Node.js',
-      id: 2,
-      parts: [
-        {
-          name: 'Routing',
-          exercises: 3,
-          id: 1,
-        },
-        {
-          name: 'Middlewares',
-          exercises: 7,
-          id: 2,
-        },
-      ],
-    },
-  ];
+  const [newName, setNewName] = useState('');
+  const [newNumber, setNewNumber] = useState('');
+  const [person, setPerson] = useState([]);
+  const [filterName, setFilterName] = useState('');
 
-  return <Course courses={courses} />;
-}
+  const filteredPerson = filterName
+    ? person.filter((p) => p.name === filterName)
+    : person;
+
+  return (
+    <>
+      <h1>Phonebook</h1>
+      <Filter filterName={filterName} setFilterName={setFilterName} />
+      <h1>Add a new contact</h1>
+      <ContactForm
+        newName={newName}
+        setNewName={setNewName}
+        newNumber={newNumber}
+        setNewNumber={setNewNumber}
+        setPerson={setPerson}
+        person={person}
+      />
+      <h1>Contact</h1>
+      <Person person={filteredPerson}/>
+    </>
+  );
+};
 
 export default App;
