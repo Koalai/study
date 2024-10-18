@@ -18,7 +18,7 @@ function ContactForm({ person, setPerson }) {
 
       axios
         .put(
-          `http://localhost:3001/persons/${personSelected.id}`,
+          `http://localhost:3001/api/persons/${personSelected.id}`,
           numberChanged
         )
         .then((response) => {
@@ -36,7 +36,7 @@ function ContactForm({ person, setPerson }) {
     };
 
     axios
-      .post('http://localhost:3001/persons', newPerson)
+      .post('http://localhost:3001/api/persons', newPerson)
       .then((response) => {
         setPerson(person.concat(response.data));
       })

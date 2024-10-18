@@ -3,7 +3,7 @@ import axios from 'axios';
 
 function Person({ person, setPerson }) {
   const handleChangeImportant = (id) => {
-    const url = `http://localhost:3001/persons/${id}`;
+    const url = `http://localhost:3001/api/persons/${id}`;
     const personSelected = person.find((p) => p.id === id);
     const changedImportant = {
       ...personSelected,
@@ -23,7 +23,7 @@ function Person({ person, setPerson }) {
 
   const handleDelete = (id, name) => {
     window.confirm(`Delete ${name} ?`);
-    axios.delete(`http://localhost:3001/persons/${id}`).then((response) => {
+    axios.delete(`http://localhost:3001/api/persons/${id}`).then((response) => {
       setPerson(person.filter((p) => p.id !== id));
     });
   };

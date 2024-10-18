@@ -3,7 +3,7 @@ const morgan = require('morgan');
 const cors = require('cors')
 const app = express();
 
-let people = [
+let contacts = [
   {
     id: '1',
     name: 'Arto Hellas',
@@ -38,23 +38,23 @@ app.use(
   morgan(':method :url :status :res[content-length] :response-time ms :body')
 );
 
-app.get('/api/person', (request, response) => {
-  response.json(people);
+app.get('/api/persons', (request, response) => {
+  response.json(contacts);
 });
 
 app.get('/info', (request, response) => {
   response.send(`
   <div>
-   <h1>Phonebook has info for ${people.length} people</h1>
+   <h1>Phonebook has info for ${contacts.length} contacts</h1>
    </br>
    <h1>${new Date()}</h1>
   </div>
   `);
 });
 
-app.get('/api/person/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response) => {
   const { id } = request.params;
-  const person = people.find((person) => person.id === id);
+  const person = contacts.find((person) => person.id === id);
 
   if (person) {
     response.json(person);
@@ -63,20 +63,20 @@ app.get('/api/person/:id', (request, response) => {
   }
 });
 
-app.delete('/api/person/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response) => {
   const { id } = request.params;
-  people = people.filter((p) => p.id !== id);
+  contacts = contacts.filter((p) => p.id !== id);
   response.status(204).end();
 });
 
-app.post('/api/person', (request, response) => {
+app.post('/api/persons', (request, response) => {
   const { body } = request;
 
   if (!body.name || !body.number) {
     response.status(404).json({ error: 'name or number missing' });
   }
 
-  const nameExists = people.some((person) => person.name === body.name);
+  const nameExists = contacts.some((person) => person.name === body.name);
   if (nameExists) {
     return response.status(400).json({ error: 'name must be unique' });
   }
@@ -87,8 +87,8 @@ app.post('/api/person', (request, response) => {
     id: crypto.randomUUID(),
   };
 
-  people = people.concat(newPerson);
-  response.json(people);
+  contacts = contacts.concat(newPerson);
+  response.json(contacts);
 });
 
 const PORT = 3001;
