@@ -18,7 +18,7 @@ const App = () => {
         console.error('Error get person data', error);
         alert('Failed to upload person data. Please try again.');
       });
-  }, [person]);
+  }, []);
 
   const filteredPerson = filterName
     ? person.filter((p) => p.name === filterName)
