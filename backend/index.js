@@ -1,60 +1,44 @@
 const express = require('express');
 const morgan = require('morgan');
-const cors = require('cors')
+const cors = require('cors');
+const Contact = require('./note'); 
+
 const app = express();
 
-let contacts = [
-  {
-    id: '1',
-    name: 'Arto Hellas',
-    number: '040-123456',
-  },
-  {
-    id: '2',
-    name: 'Ada Lovelace',
-    number: '39-44-5323523',
-  },
-  {
-    id: '3',
-    name: 'Dan Abramov',
-    number: '12-43-234345',
-  },
-  {
-    id: '4',
-    name: 'Mary Poppendieck',
-    number: '39-23-6423122',
-  },
-];
-
-app.use(cors())
+app.use(cors());
 app.use(express.json());
 app.use(morgan('tiny'));
 
 morgan.token('body', (req) => {
-  return JSON.stringify(req.body)
-})
+  return JSON.stringify(req.body);
+});
 
 app.use(
   morgan(':method :url :status :res[content-length] :response-time ms :body')
 );
 
-app.get('/api/persons', (request, response) => {
+// GET all contacts
+app.get('/api/persons', async (request, response) => {
+  const contacts = await Contact.find({});
   response.json(contacts);
 });
 
-app.get('/info', (request, response) => {
+// GET information about the phonebook
+app.get('/info', async (request, response) => {
+  const count = await Contact.countDocuments({});
   response.send(`
   <div>
-   <h1>Phonebook has info for ${contacts.length} contacts</h1>
-   </br>
+   <h1>Phonebook has info for ${count} contacts</h1>
+   <br/>
    <h1>${new Date()}</h1>
   </div>
   `);
 });
 
-app.get('/api/persons/:id', (request, response) => {
+// GET a specific contact by ID
+app.get('/api/persons/:id', async (request, response) => {
   const { id } = request.params;
-  const person = contacts.find((person) => person.id === id);
+  const person = await Contact.findById(id);
 
   if (person) {
     response.json(person);
@@ -63,32 +47,59 @@ app.get('/api/persons/:id', (request, response) => {
   }
 });
 
-app.delete('/api/persons/:id', (request, response) => {
+// DELETE a contact by ID
+app.delete('/api/persons/:id', async (request, response) => {
   const { id } = request.params;
-  contacts = contacts.filter((p) => p.id !== id);
+  await Contact.findByIdAndDelete(id);
   response.status(204).end();
 });
 
-app.post('/api/persons', (request, response) => {
+app.put('/api/persons/:id', async (request, response, next) => {
+  const { id } = request.params;
+  const { important } = request.body;
+
+
+  // Tạo object chứa thông tin cập nhật
+  const updatedPerson = {
+    important,
+  };
+
+  try {
+    const result = await Contact.findByIdAndUpdate(id, updatedPerson, {
+      new: true,
+      runValidators: true,
+    });
+    if (!result) {
+      return response.status(404).json({ error: 'Person not found' });
+    }
+    response.json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+// POST a new contact
+app.post('/api/persons', async (request, response) => {
   const { body } = request;
 
   if (!body.name || !body.number) {
-    response.status(404).json({ error: 'name or number missing' });
+    return response.status(400).json({ error: 'name or number missing' });
   }
 
-  const nameExists = contacts.some((person) => person.name === body.name);
+  const nameExists = await Contact.findOne({ name: body.name });
   if (nameExists) {
     return response.status(400).json({ error: 'name must be unique' });
   }
 
-  const newPerson = {
+  const newPerson = new Contact({
     name: body.name,
     number: body.number,
-    id: crypto.randomUUID(),
-  };
+    important: body.important
+  });
 
-  contacts = contacts.concat(newPerson);
-  response.json(contacts);
+  const savedPerson = await newPerson.save();
+  response.json(savedPerson);
 });
 
 const PORT = process.env.PORT || 3001;

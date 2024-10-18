@@ -32,7 +32,6 @@ function ContactForm({ person, setPerson }) {
       name: newName,
       number: newNumber,
       important: priority,
-      id: self.crypto.randomUUID(),
     };
 
     axios
