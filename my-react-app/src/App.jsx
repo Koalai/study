@@ -7,6 +7,7 @@ import axios from 'axios';
 const App = () => {
   const [person, setPerson] = useState([]);
   const [filterName, setFilterName] = useState('');
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     axios
@@ -27,9 +28,12 @@ const App = () => {
   return (
     <>
       <h1>Phonebook</h1>
+      {error && (
+        <p style={{color: 'red'}}>{error}</p>
+      )}
       <Filter filterName={filterName} setFilterName={setFilterName} />
       <h1>Add a new contact</h1>
-      <ContactForm setPerson={setPerson} person={person} />
+      <ContactForm setPerson={setPerson} person={person} setError={setError} />
       <h1>Contact</h1>
       <Person person={filteredPerson} setPerson={setPerson} />
     </>

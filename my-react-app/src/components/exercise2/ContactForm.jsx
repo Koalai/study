@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-function ContactForm({ person, setPerson }) {
+function ContactForm({ person, setPerson, setError }) {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [priority, setPriority] = useState(false);
@@ -40,8 +40,11 @@ function ContactForm({ person, setPerson }) {
         setPerson(person.concat(response.data));
       })
       .catch((error) => {
-        console.error('Error adding new person', error);
-        alert('Failed to add person. Please try again.');
+        if (error.response && error.response.data.error) {
+          setError(error.response.data.error);
+        } else {
+          setError('Error occured. Please try again!');
+        }
       });
     setNewName('');
     setNewNumber('');
@@ -55,7 +58,6 @@ function ContactForm({ person, setPerson }) {
             type='text'
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
-            required
           />
         </div>
         <div>
@@ -64,7 +66,6 @@ function ContactForm({ person, setPerson }) {
             type='tel'
             value={newNumber}
             onChange={(e) => setNewNumber(e.target.value)}
-            required
           />
         </div>
         <div>

@@ -1,7 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
-const Contact = require('./note'); 
+const Contact = require('./note');
 
 const app = express();
 
@@ -58,8 +58,6 @@ app.put('/api/persons/:id', async (request, response, next) => {
   const { id } = request.params;
   const { important } = request.body;
 
-
-  // Tạo object chứa thông tin cập nhật
   const updatedPerson = {
     important,
   };
@@ -78,29 +76,41 @@ app.put('/api/persons/:id', async (request, response, next) => {
   }
 });
 
-
 // POST a new contact
-app.post('/api/persons', async (request, response) => {
+app.post('/api/persons', async (request, response, next) => {
   const { body } = request;
 
   if (!body.name || !body.number) {
     return response.status(400).json({ error: 'name or number missing' });
   }
 
-  const nameExists = await Contact.findOne({ name: body.name });
-  if (nameExists) {
-    return response.status(400).json({ error: 'name must be unique' });
+  try {
+    const nameExists = await Contact.findOne({ name: body.name });
+    if (nameExists) {
+      return response.status(400).json({ error: 'name must be unique' });
+    }
+
+    const newPerson = new Contact({
+      name: body.name,
+      number: body.number,
+      important: body.important,
+    });
+
+    const savedPerson = await newPerson.save();
+    response.json(savedPerson);
+    
+  } catch (error) {
+    next(error);
   }
-
-  const newPerson = new Contact({
-    name: body.name,
-    number: body.number,
-    important: body.important
-  });
-
-  const savedPerson = await newPerson.save();
-  response.json(savedPerson);
 });
+
+app.use((error, req, res, next) => {
+  if (error.name === 'ValidationError') {
+    return res.status(400).json({ error: error.message });
+  }
+  next(error);
+});
+
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
