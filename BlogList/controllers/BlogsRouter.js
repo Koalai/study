@@ -1,19 +1,24 @@
 const blogsRouter = require("express").Router()
 const Blog = require("../models/blog")
+const User = require("../models/user")
 
 blogsRouter.get("/", async (request, response) => {
   try {
-    const blogs = await Blog.find({})
-
-    const { _id, ...rest } = blogs
+    const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
+    
 
     const formattedBlogs = blogs.map((blog) => ({
       id: blog._id.toString(),
-      ...rest,
-    }))
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      likes: blog.likes
+    }));
+
 
     response.json(formattedBlogs)
   } catch (error) {
+    console.log(error)
     response.status(500).json({ error: "Internal server error" })
   }
 })
@@ -21,16 +26,21 @@ blogsRouter.get("/", async (request, response) => {
 blogsRouter.post("/", async (request, response) => {
   const blogData = request.body
 
+  const user = await User.findById(blogData.userId)
+
   if (!blogData.title || !blogData.url) {
     return response.status(400).json({ error: "Title and URL are required." });}
 
   const blog = new Blog({
     ...blogData,
-    likes: blogData.likes || 0
+    likes: blogData.likes || 0,
+    user: user.id
   })
 
   try {
     const result = await blog.save()
+    user.blogs = user.blogs.concat(result._id)
+    await user.save()
 
     const { _id, ...rest } = result
 
