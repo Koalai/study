@@ -4,6 +4,9 @@ import blogService from "./services/blogs"
 import loginService from "./services/login"
 import "./index.css"
 import Notification from "./components/Notification"
+import LoginForm from "./components/LoginForm"
+import BlogForm from "./components/BlogForm"
+import Blogs from "./components/Blog"
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -15,6 +18,7 @@ const App = () => {
   const [title, setTitle] = useState("")
   const [author, setAuthor] = useState("")
   const [url, setUrl] = useState("")
+  const [blogFormVisible, setBlogFormVisible] = useState(false)
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -66,14 +70,13 @@ const App = () => {
   }
 
   const createBlog = async (e) => {
-    e.preventDefault() 
+    e.preventDefault()
 
     if (!title || !author || !url) {
-      setErrorMessage("All fields must be filled");
+      setErrorMessage("All fields must be filled")
       setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
-      return;
+        setErrorMessage(null)
+      }, 5000)
     }
 
     try {
@@ -85,7 +88,7 @@ const App = () => {
       setTitle("")
       setAuthor("")
       setUrl("")
-
+      setBlogFormVisible(false)
       setTimeout(() => {
         setSuccessMessage(null)
       }, 5000)
@@ -95,6 +98,13 @@ const App = () => {
         setErrorMessage(null)
       }, 5000)
     }
+  }
+
+  const handleCancel = () => {
+    setBlogFormVisible(false)
+    setTitle("")
+    setAuthor("")
+    setUrl("")
   }
 
   return (
@@ -107,28 +117,15 @@ const App = () => {
         successMessage={successMessage}
       />
       {user === null ? (
-        <form className="flex flex-col w-52" onSubmit={handleLogin}>
-          <label htmlFor="username">Username</label>
-          <input
-            type="text"
-            className="border"
-            value={username}
-            onChange={({ target }) => setUsername(target.value)}
+        <>
+          <LoginForm
+            username={username}
+            password={password}
+            handleLogin={handleLogin}
+            handleUsernameChange={({ target }) => setUsername(target.value)}
+            handlePasswordChange={({ target }) => setPassword(target.value)}
           />
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            className="border"
-            value={password}
-            onChange={({ target }) => setPassword(target.value)}
-          />
-          <button
-            className="bg-slate-400 mx-auto mt-2 text-white px-2 py-1 rounded-md"
-            type="submit"
-          >
-            Login
-          </button>
-        </form>
+        </>
       ) : (
         <>
           <div className="flex gap-4 items-center mb-4">
@@ -140,43 +137,23 @@ const App = () => {
               Log out
             </button>
           </div>
-          <div>
-            <h2 className="font-bold text-4xl">Create new</h2>
-            <form className="flex flex-col w-52" onSubmit={createBlog}>
-              <label htmlFor="title">Title</label>
-              <input
-                type="text"
-                className="border"
-                value={title}
-                onChange={({ target }) => setTitle(target.value)}
-              />
-              <label htmlFor="author">Author</label>
-              <input
-                type="text"
-                className="border"
-                value={author}
-                onChange={({ target }) => setAuthor(target.value)}
-              />
-              <label htmlFor="url">URL</label>
-              <input
-                type="text"
-                className="border"
-                value={url}
-                onChange={({ target }) => setUrl(target.value)}
-              />
-              <button
-                className="bg-slate-400 px-2 py-1 text-white rounded-md mx-auto my-4"
-                type="submit"
-              >
-                Create
-              </button>
-            </form>
-          </div>
-          {blogs.map((blog) => (
-            <p key={blog._id}>
-              {blog.title} is written by {blog.author}
-            </p>
-          ))}
+          {!blogFormVisible ? (
+            <button type="button" className="bg-slate-400 px-2 py-1 text-white rounded-md mx-auto my-4" onClick={() => setBlogFormVisible(true)}>
+              Add blog
+            </button>
+          ) : (
+            <BlogForm
+              title={title}
+              author={author}
+              url={url}
+              createBlog={createBlog}
+              handleTitleChange={({ target }) => setTitle(target.value)}
+              handleAuthorChange={({ target }) => setAuthor(target.value)}
+              handleUrlChange={({ target }) => setUrl(target.value)}
+              handleCancel={handleCancel}
+            />
+          )}
+            <Blogs blogs={blogs} setBlogs={setBlogs } />
         </>
       )}
     </div>
