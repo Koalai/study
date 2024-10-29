@@ -1,5 +1,4 @@
-
-import PropTypes from "prop-types"; // Import PropTypes
+import PropTypes from "prop-types"; 
 
 function BlogForm({
   createBlog,
@@ -17,6 +16,7 @@ function BlogForm({
       <form className="flex flex-col w-52" onSubmit={createBlog}>
         <label htmlFor="title">Title</label>
         <input
+          id="title" // Add id here
           type="text"
           className="border"
           value={title}
@@ -24,6 +24,7 @@ function BlogForm({
         />
         <label htmlFor="author">Author</label>
         <input
+          id="author" // Add id here
           type="text"
           className="border"
           value={author}
@@ -31,6 +32,7 @@ function BlogForm({
         />
         <label htmlFor="url">URL</label>
         <input
+          id="url" // Add id here
           type="text"
           className="border"
           value={url}
@@ -55,7 +57,6 @@ function BlogForm({
     </div>
   );
 }
-
 
 BlogForm.propTypes = {
   createBlog: PropTypes.func.isRequired,
