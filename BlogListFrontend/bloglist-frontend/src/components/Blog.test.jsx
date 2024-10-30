@@ -17,6 +17,7 @@ describe('Blog component', () => {
       user: { name: 'Test User' },
     },
   ];
+  const user = userEvent.setup()
 
   it('renders the blog title and author but does not render URL or likes by default', () => {
     render(<Blog blogs={mockBlogs} setBlogs={mockSetBlogs} />);
@@ -34,13 +35,26 @@ describe('Blog component', () => {
     render(<Blog blogs={mockBlogs} setBlogs={mockSetBlogs} />);
 
    
-    await userEvent.click(screen.getByRole('button', { name: /show/i }));
+    await user.click(screen.getByRole('button', { name: /show/i }));
 
   
     expect(screen.getByText('URL: https://example.com')).toBeInTheDocument();
     expect(screen.getByText('Likes: 5')).toBeInTheDocument();
   });
 
+  it('calls the setBlogs handler twice when the like button is clicked twice', async () => {
+    render(<Blog blogs={mockBlogs} setBlogs={mockSetBlogs} />);
+    
+    await user.click(screen.getByRole('button', { name: /show/i }));
+    const likeButton = screen.getByRole('button', { name: /like/i });
   
+    await  user.click(likeButton); 
+    await  user.click(likeButton);
+  
+    screen.debug()
+
+    expect(mockSetBlogs.mock.calls).toHaveBeenCalledTimes(2)
+    console.log("setBlogs calls:", mockSetBlogs.mock.calls);
+  });
   
 });
