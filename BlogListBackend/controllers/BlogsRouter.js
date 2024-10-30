@@ -27,7 +27,7 @@ blogsRouter.post("/", userExtractor, async (request, response) => {
   const blog = new Blog({
     ...blogData,
     likes: blogData.likes || 0,
-    user: request.user.id // Lấy user từ middleware
+    user: request.user.id
   });
 
   try {
@@ -74,6 +74,7 @@ blogsRouter.put("/:id", async (request, response) => {
       { new: true, runValidators: true }
     );
 
+
     if (!updatedBlog) {
       return response.status(404).json({ error: "Blog not found." });
     }
@@ -86,7 +87,8 @@ blogsRouter.put("/:id", async (request, response) => {
       likes: updatedBlog.likes,
     });
   } catch (error) {
-    response.status(400).json({ error: "Bad request" });
+    console.error(error);
+    response.status(400).json({ error: error.message });
   }
 });
 

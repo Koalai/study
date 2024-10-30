@@ -10,13 +10,19 @@ function BlogForm({
   handleUrlChange,
   handleCancel,
 }) {
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    createBlog({ title, author, url });
+   }
+
   return (
     <div>
       <h2 className="font-bold text-4xl">Create new</h2>
-      <form className="flex flex-col w-52" onSubmit={createBlog}>
+      <form className="flex flex-col w-52" onSubmit={handleSubmit}>
         <label htmlFor="title">Title</label>
         <input
-          id="title" // Add id here
+          id="title" 
           type="text"
           className="border"
           value={title}
@@ -24,7 +30,7 @@ function BlogForm({
         />
         <label htmlFor="author">Author</label>
         <input
-          id="author" // Add id here
+          id="author" 
           type="text"
           className="border"
           value={author}
@@ -32,7 +38,7 @@ function BlogForm({
         />
         <label htmlFor="url">URL</label>
         <input
-          id="url" // Add id here
+          id="url" 
           type="text"
           className="border"
           value={url}

@@ -49,7 +49,7 @@ const App = () => {
       setUser(user)
       setUsername("")
       setPassword("")
-      setErrorMessage(null)
+      setErrorMessage("")
     } catch (exception) {
       if (exception.response && exception.response.status === 401) {
         setErrorMessage("Wrong username or password")
@@ -68,36 +68,33 @@ const App = () => {
     setUser(null)
   }
 
-  const createBlog = async (e) => {
-    e.preventDefault()
-
-    if (!title || !author || !url) {
-      setErrorMessage("All fields must be filled")
+  const createBlog = async (blogData) => {
+    if (!blogData.title || !blogData.author || !blogData.url) {
+      setErrorMessage("All fields must be filled");
       setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+        setErrorMessage(null);
+      }, 5000);
+      return;
     }
-
+  
     try {
-      const newBlog = await blogService.create({ title, author, url })
-      setBlogs(blogs.concat(newBlog))
-      setSuccessMessage(
-        `A new blog '${newBlog.title}' by ${newBlog.author} added`
-      )
-      setTitle("")
-      setAuthor("")
-      setUrl("")
-      setBlogFormVisible(false)
+      const newBlog = await blogService.create(blogData);
+      setBlogs(blogs.concat(newBlog));
+      setSuccessMessage(`A new blog '${newBlog.title}' by ${newBlog.author} added`);
+      setTitle("");
+      setAuthor("");
+      setUrl("");
+      setBlogFormVisible(false);
       setTimeout(() => {
-        setSuccessMessage(null)
-      }, 5000)
+        setSuccessMessage(null);
+      }, 5000);
     } catch (error) {
-      setErrorMessage("Failed to add the blog")
+      setErrorMessage("Failed to add the blog");
       setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+        setErrorMessage(null);
+      }, 5000);
     }
-  }
+  };
 
   const handleCancel = () => {
     setBlogFormVisible(false)
@@ -152,7 +149,7 @@ const App = () => {
               handleCancel={handleCancel}
             />
           )}
-            <Blogs blogs={blogs} setBlogs={setBlogs } />
+            <Blogs blogs={blogs} setBlogs={setBlogs} />
         </>
       )}
     </div>
