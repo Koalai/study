@@ -58,7 +58,7 @@ const App = () => {
       }
 
       setTimeout(() => {
-        setErrorMessage(null)
+        setErrorMessage('')
       }, 5000)
     }
   }
@@ -72,7 +72,7 @@ const App = () => {
     if (!blogData.title || !blogData.author || !blogData.url) {
       setErrorMessage("All fields must be filled");
       setTimeout(() => {
-        setErrorMessage(null);
+        setErrorMessage('');
       }, 5000);
       return;
     }
@@ -86,12 +86,12 @@ const App = () => {
       setUrl("");
       setBlogFormVisible(false);
       setTimeout(() => {
-        setSuccessMessage(null);
+        setSuccessMessage('');
       }, 5000);
     } catch (error) {
       setErrorMessage("Failed to add the blog");
       setTimeout(() => {
-        setErrorMessage(null);
+        setErrorMessage('');
       }, 5000);
     }
   };

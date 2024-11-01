@@ -13,7 +13,6 @@ const Blog = ({ blogs, setBlogs }) => {
   }
   const incrementLikes = async (id) => {
     try {
-      // Lấy blog đã được cập nhật từ blogs mới nhất
       const blogToUpdate = blogs.find((b) => b._id === id)
       if (!blogToUpdate) {
         console.error("Blog not found")
@@ -50,35 +49,36 @@ const Blog = ({ blogs, setBlogs }) => {
       {blogs.map((blog) => (
         <div
           key={blog._id}
-          className="border px-4 w-2/3 my-2 py-2 flex flex-col"
+          className='border px-4 w-2/3 my-2 py-2 flex flex-col'
         >
-          <div className="flex">
+          <div className='flex ' data-testid='blog-test'>
             <p>
               {blog.title} {blog.author}
             </p>
             <button
-              className="ml-8 bg-slate-400 px-2 py-1 text-white rounded-md"
+              data-testid={`${blog._id}-showBtn`}
+              className='ml-8 bg-slate-400 px-2 py-1 text-white rounded-md'
               onClick={() => handleView(blog._id)}
             >
-              {viewBlog[blog._id] ? "Hide" : "Show"}
+              {viewBlog[blog._id] ? 'Hide' : 'Show'}
             </button>
           </div>
           {viewBlog[blog._id] && (
-            <div className="mt-2">
+            <div className='mt-2'>
               <p>User: {blog.user && blog.user.name}</p>
               <p>URL: {blog.url}</p>
               <div>
                 <span
-                  role="button"
+                  role='button'
                   data-testid={`${blog._id}-likes`}
-                  className=" bg-slate-400 px-2 py-1 text-white rounded-md"
+                  className='mb-2 bg-slate-400 px-2 py-1 text-white rounded-md'
                   onClick={() => incrementLikes(blog._id)}
                 >
                   Likes: {blog.likes}
                 </span>
               </div>
               <button
-                className="bg-slate-400 px-2 py-1 text-white rounded-md"
+                className='bg-slate-400 px-2 py-1 text-white rounded-md'
                 onClick={() => handleDelete(blog._id)}
               >
                 Delete blog
@@ -88,7 +88,7 @@ const Blog = ({ blogs, setBlogs }) => {
         </div>
       ))}
     </>
-  )
+  );
 }
 
 export default Blog
