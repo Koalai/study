@@ -5,6 +5,7 @@
   "scripts": {
     "test": "playwright test --project=chromium ",
     "test:report": "playwright show-report"
+    
   },
   "author": "",
   "license": "ISC",

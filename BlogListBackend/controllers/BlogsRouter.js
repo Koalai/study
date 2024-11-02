@@ -9,6 +9,7 @@ const {userExtractor} = require('../utils/middleware')
 blogsRouter.get("/", async (request, response) => {
   try {
     const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 });
+    console.log(blogs)
     response.json(blogs);
   } catch (error) {
     console.log(error);
@@ -65,31 +66,36 @@ blogsRouter.delete("/:id", userExtractor, async (request, response) => {
 // PUT (update likes) for a blog
 blogsRouter.put("/:id", async (request, response) => {
   const { id } = request.params;
-  const { likes } = request.body; 
+  const { likes } = request.body;
 
   try {
     const updatedBlog = await Blog.findByIdAndUpdate(
       id,
       { likes },
       { new: true, runValidators: true }
-    );
-
+    ).populate('user', { name: 1, username: 1 });
 
     if (!updatedBlog) {
       return response.status(404).json({ error: "Blog not found." });
     }
 
     response.json({
-      id: updatedBlog._id.toString(),
+      _id: updatedBlog._id,
       title: updatedBlog.title,
       author: updatedBlog.author,
       url: updatedBlog.url,
       likes: updatedBlog.likes,
+      user: {
+        id: updatedBlog.user._id,
+        username: updatedBlog.user.username,
+        name: updatedBlog.user.name
+      }
     });
   } catch (error) {
     console.error(error);
     response.status(400).json({ error: error.message });
   }
 });
+
 
 module.exports = blogsRouter;

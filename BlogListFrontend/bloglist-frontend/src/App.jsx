@@ -42,7 +42,7 @@ const App = () => {
 
     try {
       const user = await loginService.login({ username, password })
-
+      console.log(user)
       window.localStorage.setItem("loggedUser", JSON.stringify(user))
 
       blogService.setToken(user.token)
@@ -149,7 +149,7 @@ const App = () => {
               handleCancel={handleCancel}
             />
           )}
-            <Blogs blogs={blogs} setBlogs={setBlogs} />
+            <Blogs blogs={blogs} setBlogs={setBlogs} user={user} />
         </>
       )}
     </div>

@@ -23,8 +23,8 @@ const getAll = async () => {
 const update = async (id, newObject) => {
   try {
     const response = await axios.put(`${baseUrl}/${id}`, newObject);
-    console.log("Update response:", response.data);
     return response.data; 
+    
   } catch (error) {
     console.error("Failed to update blog:", error);
     throw error;
