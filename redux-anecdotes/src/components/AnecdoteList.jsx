@@ -1,20 +1,23 @@
-import React from 'react'
+import { useSelector } from 'react-redux';
 
-function AnecdoteList({anecdotes, vote}) {
-  return (
-    <>
-      {anecdotes.map((anecdote) => (
-        <div key={anecdote.id}>
-          <div>{anecdote.content}</div>
-          <div>
-            has {anecdote.votes}
-            <button onClick={() => vote(anecdote.id)}>vote</button>
-          </div>
-        </div>
-      ))}
-      t
-    </>
+const AnecdoteList = ({ vote }) => {
+  const anecdotes = useSelector((state) => state.note);
+  const currentFilter = useSelector((state) => state.filterNote);
+
+  const filteredAnecdotes = anecdotes.filter((anecdote) =>
+    anecdote.content.toLowerCase().includes(currentFilter.toLowerCase())
   );
-}
 
-export default AnecdoteList
+  return (
+    <ul>
+      {filteredAnecdotes.map((anecdote) => (
+        <li key={anecdote.id}>
+          {anecdote.content}
+          <button onClick={() => vote(anecdote.id)}>vote</button>
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+export default AnecdoteList;

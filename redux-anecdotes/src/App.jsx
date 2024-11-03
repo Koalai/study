@@ -1,30 +1,54 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { addVote, createNote } from './reducers/anecdoteReducer';
+import { setNotification, clearNotification } from './reducers/notificationReducer';
 import AnecdoteForm from './components/AnecdoteForm';
 import AnecdoteList from './components/AnecdoteList';
+import Filter from './components/Filter';
+import Notification from './components/Notification';
 
 const App = () => {
-  const anecdotes = useSelector((state) =>
-    [...state].sort((a, b) => b.votes - a.votes)
-  );
-
   const dispatch = useDispatch();
 
-  const vote = (id) => {
+  const allAnecdotes = useSelector((state) => state.note);
+
+
+  const currentFilter = useSelector((state) => state.filterNote);
+
+
+  const filteredAnecdotes = allAnecdotes
+    .filter((anecdote) =>
+      anecdote.content.toLowerCase().includes(currentFilter.toLowerCase())
+    )
+    .sort((a, b) => b.votes - a.votes);
+
+  const handleVote = (id) => {
     dispatch(addVote(id));
+    const anecdoteVoted = allAnecdotes.find(a => a.id === id)
+    console.log(anecdoteVoted)
+    dispatch(setNotification(`Anecdote "${anecdoteVoted.content}" voted!`));
+    setTimeout(() => {
+      dispatch(clearNotification());
+    }, 5000);
   };
 
-  const handleCreateNote = (event) => {
+  const handleCreateAnecdote = (event) => {
     event.preventDefault();
     const content = event.target.note.value;
     dispatch(createNote(content));
+    dispatch(setNotification(`New anecdote created: "${content}"`));
+    setTimeout(() => {
+      dispatch(clearNotification());
+    }, 5000);
+    event.target.note.value = '';
   };
 
   return (
     <div>
+      <Notification />
       <h2>Anecdotes</h2>
-      <AnecdoteList anecdotes={anecdotes} vote={vote} />
-      <AnecdoteForm handleCreateNote={handleCreateNote} />
+      <Filter />
+      <AnecdoteList anecdotes={filteredAnecdotes} vote={handleVote} />
+      <AnecdoteForm handleCreateNote={handleCreateAnecdote} />
     </div>
   );
 };
