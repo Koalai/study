@@ -1,51 +1,51 @@
 import { createSlice } from '@reduxjs/toolkit';
+import noteService from '../services/note';
 
-const anecdotesAtStart = [
-  'If it hurts, do it more often',
-  'Adding manpower to a late software project makes it later!',
-  'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
-  'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
-  'Premature optimization is the root of all evil.',
-  'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
-];
-
-const getId = () => (100000 * Math.random()).toFixed(0);
-
-const asObject = (anecdote) => ({
-  content: anecdote,
-  id: getId(),
-  votes: 0,
-});
-
-const initialState = anecdotesAtStart.map(asObject);
+export const getId = () => (100000 * Math.random()).toFixed(0);
 
 const anecdotesSlice = createSlice({
   name: 'anecdotes',
-  initialState,
+  initialState: [],
   reducers: {
     addVote(state, action) {
-      const anecdote = state.find(
-        (anecdote) => anecdote.id === action.payload.id
+      const note = state.find(
+        (n) => n.id === action.payload.id
       );
-      if (anecdote) {
-        anecdote.votes += 1; 
+      if (note) {
+        note.votes += 1;
       }
     },
-    createNote: {
-      reducer(state, action) {
-        state.push(asObject(action.payload)); 
-      },
-      prepare(content) {
-        return {
-          payload: content,
-        };
-      },
+    appendNote(state, action) {
+      state.push(action.payload);
+    },
+    setNote(state, action) {
+      return action.payload;
     },
   },
 });
 
+export const { addVote, appendNote, setNote } = anecdotesSlice.actions;
 
-export const { addVote, createNote } = anecdotesSlice.actions;
+export const initializeNotes = () => {
+  return async (dispatch) => {
+    const notes = await noteService.getAll();
+    console.log(notes)
+    dispatch(setNote(notes))
+  };
+};
 
+export const createNote = (content) => {
+  return async (dispatch) => {
+    const newNote = await noteService.createNew(content);
+    console.log(newNote)
+    dispatch(appendNote(newNote));
+  };
+};
 
+export const noteVote = (id, note) => {
+  return async dispatch => {
+    const updateNote = await noteService.update(id, note)
+    dispatch(addVote(updateNote))
+  }
+}
 export default anecdotesSlice.reducer;

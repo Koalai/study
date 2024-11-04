@@ -1,16 +1,21 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { addVote, createNote } from './reducers/anecdoteReducer';
+import { noteVote, createNote, initializeNotes } from './reducers/anecdoteReducer';
 import { setNotification, clearNotification } from './reducers/notificationReducer';
 import AnecdoteForm from './components/AnecdoteForm';
 import AnecdoteList from './components/AnecdoteList';
 import Filter from './components/Filter';
 import Notification from './components/Notification';
+import { useEffect } from 'react';
 
 const App = () => {
   const dispatch = useDispatch();
 
-  const allAnecdotes = useSelector((state) => state.note);
+  useEffect(() => {
+    dispatch(initializeNotes())
+  }, [])
 
+  const allAnecdotes = useSelector((state) => state.note);
+  console.log(allAnecdotes)
 
   const currentFilter = useSelector((state) => state.filterNote);
 
@@ -22,13 +27,9 @@ const App = () => {
     .sort((a, b) => b.votes - a.votes);
 
   const handleVote = (id) => {
-    dispatch(addVote(id));
     const anecdoteVoted = allAnecdotes.find(a => a.id === id)
-    console.log(anecdoteVoted)
-    dispatch(setNotification(`Anecdote "${anecdoteVoted.content}" voted!`));
-    setTimeout(() => {
-      dispatch(clearNotification());
-    }, 5000);
+    dispatch(noteVote(id, anecdoteVoted));
+    dispatch(setNotification(`Anecdote "${anecdoteVoted.content}" voted!`, 5));
   };
 
   const handleCreateAnecdote = (event) => {
