@@ -1,9 +1,12 @@
 import { useState } from "react"
-import blogService from "../services/blogs"
 import PropTypes from "prop-types"
+import { updateLike, removeBlog} from "../reducers/blogReducer"
+import { useDispatch } from "react-redux"
 
-const Blog = ({ blogs, setBlogs, user }) => {
+const Blogs = ({ blogs, user }) => {
   const [viewBlog, setViewBlog] = useState({})
+  const dispatch = useDispatch()
+  console.log(user)
 
   const handleView = (id) => {
     setViewBlog((prev) => ({
@@ -20,14 +23,8 @@ const Blog = ({ blogs, setBlogs, user }) => {
       }
 
       const updatedBlog = { ...blogToUpdate, likes: blogToUpdate.likes + 1 }
-      console.log("update blog", updatedBlog)
-
-      const response = await blogService.update(id, updatedBlog)
-      console.log("call update", response)
-
-      setBlogs((prevBlogs) =>
-        prevBlogs.map((blog) => (blog._id === id ? response : blog))
-      )
+      console.log(updatedBlog)
+      dispatch(updateLike(updatedBlog))
     } catch (error) {
       console.error("Failed to update likes:", error)
     }
@@ -36,8 +33,7 @@ const Blog = ({ blogs, setBlogs, user }) => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this blog?")) {
       try {
-        await blogService.remove(id)
-        setBlogs(blogs.filter((blog) => blog._id !== id))
+        dispatch(removeBlog(id))
       } catch (error) {
         console.error("Failed to delete blog:", error)
       }
@@ -45,7 +41,6 @@ const Blog = ({ blogs, setBlogs, user }) => {
   }
 
   const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes)
-  console.log(user.id, blogs.map(u => u.user.id))
 
   return (
     <>
@@ -98,10 +93,9 @@ const Blog = ({ blogs, setBlogs, user }) => {
   )
 }
 
-export default Blog
+export default Blogs
 
-Blog.propTypes = {
+Blogs.propTypes = {
   blogs: PropTypes.array.isRequired,
-  setBlogs: PropTypes.func.isRequired,
   user: PropTypes.object.isRequired,
 }
