@@ -20,6 +20,7 @@ blogsRouter.get("/", async (request, response) => {
 // POST a new blog (cần xác thực người dùng)
 blogsRouter.post("/", userExtractor, async (request, response) => {
   const blogData = request.body;
+  console.log(request)
 
   if (!blogData.title || !blogData.url) {
     return response.status(400).json({ error: "Title and URL are required." });
@@ -31,8 +32,14 @@ blogsRouter.post("/", userExtractor, async (request, response) => {
     user: request.user.id
   });
 
+
   try {
     const result = await blog.save();
+    const userBlogSaved = await User.findById(request.user.id)
+    userBlogSaved.blogs = userBlogSaved.blogs.concat(result._id)
+    await userBlogSaved.save()  
+
+
     response.status(201).json(result);
   } catch (error) {
     console.log(error);
