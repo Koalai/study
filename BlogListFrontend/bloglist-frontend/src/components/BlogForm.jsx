@@ -1,46 +1,40 @@
-import PropTypes from "prop-types"
+
 import { useState } from "react"
 import { useDispatch } from "react-redux"
-import {
-  setErrorMessage,
-  clearMessage,
-  setSuccessMessage,
-} from "../reducers/notiReducer"
 import { addNewBlog } from "../reducers/blogReducer"
+import { useNoti } from "./NotiProvider"
+
 function BlogForm() {
   const [blogFormVisible, setBlogFormVisible] = useState(false)
   const [title, setTitle] = useState("")
   const [author, setAuthor] = useState("")
-  const [url, setUrl] = useState("")
   const dispatch = useDispatch()
+  const [url, setUrl] = useState("")
+  const { setError, setSuccess, clearNoti } = useNoti()
 
   const handleCreateBlog = async (blogData) => {
     if (!blogData.title || !blogData.author || !blogData.url) {
-      dispatch(setErrorMessage("All fields must be filled"))
+      setError("All fields must be filled")
       setTimeout(() => {
-        dispatch(clearMessage())
+        clearNoti()
       }, 5000)
       return
     }
 
     try {
       dispatch(addNewBlog(blogData))
-      dispatch(
-        setSuccessMessage(
-          `A new blog '${blogData.title}' by ${blogData.author} added`
-        )
-      )
+      setSuccess(`A new blog '${blogData.title}' by ${blogData.author} added`)
       setTitle("")
       setAuthor("")
       setUrl("")
       setBlogFormVisible(false)
       setTimeout(() => {
-        dispatch(clearMessage())
+        clearNoti()
       }, 5000)
     } catch (error) {
-      dispatch(setErrorMessage("Failed to add the blog"))
+     setError("Failed to add the blog")
       setTimeout(() => {
-        dispatch(clearMessage())
+        clearNoti()
       }, 5000)
     }
   }

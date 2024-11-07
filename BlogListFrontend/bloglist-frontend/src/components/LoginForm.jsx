@@ -1,15 +1,16 @@
 
-import { useDispatch } from "react-redux"
 import { useState } from "react"
 import { setUser } from "../reducers/userReducer"
-import { setErrorMessage, clearMessage } from "../reducers/notiReducer"
 import loginService from '../services/login'
 import blogService from '../services/blogs'
+import { useNoti } from "./NotiProvider"
+import { useDispatch } from "react-redux"
 
 function LoginForm() {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const dispatch = useDispatch()
+  const {setError, clearNoti} = useNoti()
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -21,16 +22,15 @@ function LoginForm() {
       dispatch(setUser(user))
       setUsername("")
       setPassword("")
-      dispatch(clearMessage())
     } catch (exception) {
       if (exception.response && exception.response.status === 401) {
-        dispatch(setErrorMessage("Wrong username or password"))
+        setError("Wrong username or password")
       } else {
-        dispatch(setErrorMessage("Login failed"))
+        setError("Login failed")
       }
 
       setTimeout(() => {
-        dispatch(clearMessage())
+        clearNoti()
       }, 5000)
     }
   }

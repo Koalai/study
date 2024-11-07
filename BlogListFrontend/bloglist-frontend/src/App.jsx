@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react"
+import {  useEffect, useState } from "react"
 import blogService from "./services/blogs"
 import "./index.css"
 import Notification from "./components/Notification"
 import LoginForm from "./components/LoginForm"
 import BlogForm from "./components/BlogForm"
-import { useDispatch, useSelector } from "react-redux"
 import { setUser, logOut } from "./reducers/userReducer"
 import { initializeBlogs } from "./reducers/blogReducer"
 import UserDetail from "./components/UserDetail"
@@ -14,14 +13,16 @@ import Menu from "./components/Menu"
 import Blogs from "./components/Blogs"
 import loginService from "./services/login"
 import BlogDetail from "./components/BlogDetail"
+import { useDispatch, useSelector } from "react-redux"
 
 const App = () => {
-  const dispatch = useDispatch()
-  const [users, setUsers] = useState([])
 
-  const { errorMessage, successMessage } = useSelector((state) => state.noti)
-  const user = useSelector((state) => state.user)
-  const blogs = useSelector((state) => state.blogs)
+  const [users, setUsers] = useState([])
+  const user = useSelector(state => state.user)
+  const blogs = useSelector(state => state.blog)
+  const dispatch = useDispatch()
+  
+
   useEffect(() => {
     const getAllUser = async () => {
       const allUsers = await loginService.getUser()
@@ -55,10 +56,7 @@ const App = () => {
         {user === null ? `log in to application` : `blogs`}
       </h1>
 
-      <Notification
-        errorMessage={errorMessage}
-        successMessage={successMessage}
-      />
+      <Notification  />
       {user === null ? (
         <>
           <LoginForm user={user} />
@@ -84,8 +82,11 @@ const App = () => {
             <Route
               path="/users/:id"
               element={<UserDetail users={users} />}
-              ></Route>
-              <Route path="/blogs/:id" element={<BlogDetail blogs={blogs} />}></Route>
+            ></Route>
+            <Route
+              path="/blogs/:id"
+              element={<BlogDetail blogs={blogs} />}
+            ></Route>
           </Routes>
         </>
       )}
