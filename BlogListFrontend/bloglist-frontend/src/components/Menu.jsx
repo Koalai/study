@@ -16,7 +16,7 @@ function Menu() {
         Create
       </Link>
       <Link
-        to="/blogs"
+        to="/"
         className="bg-slate-400 px-2 py-1 text-white rounded-md"
       >
         Blog list

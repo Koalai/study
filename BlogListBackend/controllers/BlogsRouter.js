@@ -35,12 +35,15 @@ blogsRouter.post("/", userExtractor, async (request, response) => {
 
   try {
     const result = await blog.save();
-    const userBlogSaved = await User.findById(request.user.id)
-    userBlogSaved.blogs = userBlogSaved.blogs.concat(result._id)
-    await userBlogSaved.save()  
+    const userBlogSaved = await User.findById(request.user.id);
+    userBlogSaved.blogs = userBlogSaved.blogs.concat(result._id);
+    await userBlogSaved.save();
 
-
-    response.status(201).json(result);
+    const populatedBlog = await Blog.findById(result._id).populate(
+      'user',
+      {username: 1, name: 1}
+    ); 
+    response.status(201).json(populatedBlog);
   } catch (error) {
     console.log(error);
     response.status(400).json({ error: "Bad request" });

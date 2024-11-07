@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux"
 import { addNewBlog } from "../reducers/blogReducer"
 import { useNoti } from "./NotiProvider"
 
-function BlogForm() {
+function BlogForm({createBlogMutation}) {
   const [blogFormVisible, setBlogFormVisible] = useState(false)
   const [title, setTitle] = useState("")
   const [author, setAuthor] = useState("")
@@ -22,7 +22,7 @@ function BlogForm() {
     }
 
     try {
-      dispatch(addNewBlog(blogData))
+      createBlogMutation.mutate(blogData)
       setSuccess(`A new blog '${blogData.title}' by ${blogData.author} added`)
       setTitle("")
       setAuthor("")
