@@ -131,6 +131,7 @@ const resolvers = {
         ).length
         return {
           name: author.name,
+          born: author.born,
           bookCount,
         }
       })
@@ -161,7 +162,7 @@ const resolvers = {
       return newBook
     },
 
-    editAuthor: (_, { name, setBornTo }) => {
+    editAuthor: (root, { name, setBornTo }) => {
       const author = authors.find((a) => a.name === name)
 
       if (author) {
