@@ -43,12 +43,14 @@ const NewBook = (props) => {
     }
   }
 
-  const addGenre = () => {
-    if (genre) {
-      setGenres([...genres, genre]) 
-      setGenre('') 
-    }
+const addGenre = () => {
+  if (genre && !genres.includes(genre)) {
+    setGenres([...genres, genre]);
+    setGenre(''); 
+  } else {
+    console.log('Genre already added or empty input');
   }
+};
 
   return (
     <div>

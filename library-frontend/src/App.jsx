@@ -5,11 +5,11 @@ import BookForm from './components/BookForm';
 import { GET_DATABASE } from './queries/queries';
 import { useApolloClient, useQuery } from '@apollo/client';
 import LoginForm from './components/LoginForm';
+import BookRecommend from './components/BookRecommend';
 
 const App = () => {
   const [page, setPage] = useState('authors');
   const personResult = useQuery(GET_DATABASE);
-  console.log(personResult)
   const [token, setToken] = useState(null);
   const client = useApolloClient();
 
@@ -38,6 +38,7 @@ const App = () => {
         <button onClick={() => setPage('authors')}>authors</button>
         <button onClick={() => setPage('books')}>books</button>
         <button onClick={() => setPage('add')}>add book</button>
+        <button onClick={() => setPage('recommend')}>recommendations</button>
       </div>
       <button onClick={logout}>logout</button>
       <Authors
@@ -48,6 +49,7 @@ const App = () => {
       <Books show={page === 'books'} books={personResult.data.allBook} />
 
       <BookForm show={page === 'add'} />
+      <BookRecommend show={page === 'recommend'} books={personResult.data.allBook} user={personResult.data.me}/>
     </div>
   );
 };
