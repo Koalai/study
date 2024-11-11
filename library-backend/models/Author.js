@@ -6,7 +6,7 @@ const authorSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    minlength: 6,
+    minlength: 4,
   },
   born: {
     type: Number,
