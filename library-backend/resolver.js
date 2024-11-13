@@ -20,23 +20,28 @@ const resolvers = {
       }
       try {
         const books = await Book.find(query);
-        return books.map(async (book) => {
-          const authorDoc = await Author.findById(book.author);
+  
+        const result = await Promise.all(
+          books.map(async (book) => {
+            const authorDoc = await Author.findById(book.author);
+            const bookCount = await Book.countDocuments({
+              author: book.author,
+            });
 
-          const bookCount = await Book.countDocuments({ author: book.author });
-
-          return {
-            title: book.title,
-            published: book.published,
-            genres: book.genres,
-            id: book.id,
-            author: {
-              name: authorDoc.name,
-              born: authorDoc.born,
-              bookCount: bookCount,
-            },
-          };
-        });
+            return {
+              title: book.title,
+              published: book.published,
+              genres: book.genres,
+              id: book.id,
+              author: {
+                name: authorDoc.name,
+                born: authorDoc.born,
+                bookCount: bookCount,
+              },
+            };
+          })
+        );
+        return result; 
       } catch (error) {
         console.error(error);
       }

@@ -36,7 +36,6 @@ type Query {
     allBook(author: String, genre: String): [Book!]!
     allAuthor: [Author]!
     me: User
-   
   }
 `;
 
