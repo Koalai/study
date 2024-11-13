@@ -10,7 +10,7 @@ interface ExerciseResult {
 }
 
 
-function calculateExercises(
+export function calculateExercises(
   exercises: number[],
   target: number
 ): ExerciseResult {

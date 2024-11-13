@@ -1,6 +1,5 @@
 
-
-function calculateBmi(heightCm: number, weightKg: number): string {
+export function calculateBmi(heightCm: number, weightKg: number): string {
   const heightM = heightCm / 100;
   const bmi = weightKg / (heightM * heightM);
 
@@ -15,15 +14,17 @@ function calculateBmi(heightCm: number, weightKg: number): string {
   }
 }
 
-const bmiArgs = process.argv.slice(2);
+if (require.main === module) {
+  const args = process.argv.slice(2);
 
-const heightCm = parseFloat(bmiArgs[0]);
-const weightKg = parseFloat(bmiArgs[1]);
+  const heightCm = parseInt(args[0]);
+  const weightKg = parseInt(args[1]);
 
-if (isNaN(heightCm) || isNaN(weightKg)) {
-  console.error('Error: Both height and weight must be valid numbers.');
-  process.exit(1);
+  if (isNaN(heightCm) || isNaN(weightKg)) {
+    console.error('Error: Both height and weight must be valid numbers.');
+    process.exit(1);
+  }
+
+  const result = calculateBmi(heightCm, weightKg);
+  console.log(result);
 }
-
-const bmiResult = calculateBmi(heightCm, weightKg);
-console.log(bmiResult);
