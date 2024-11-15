@@ -12,9 +12,9 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],  
 }));
 
+app.use(express.json());
 app.use('/api/diagnoses', diagnoseRouter);
 app.use('/api/patients', patientRouter);
-app.use(express.json());
 
 
 const PORT = 3000;

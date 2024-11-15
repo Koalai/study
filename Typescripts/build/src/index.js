@@ -13,9 +13,9 @@ app.use((0, cors_1.default)({
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+app.use(express_1.default.json());
 app.use('/api/diagnoses', diagnoses_1.default);
 app.use('/api/patients', patientRouter_1.default);
-app.use(express_1.default.json());
 const PORT = 3000;
 app.get('/api/ping', (_req, res) => {
     console.log('someone pinged here');
